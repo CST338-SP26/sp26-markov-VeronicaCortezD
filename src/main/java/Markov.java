@@ -1,6 +1,7 @@
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Markov {
@@ -57,8 +58,17 @@ public class Markov {
         return " ";
     }
 
-    public String randomWord(String word){
-        return word;
+    public String randomWord(String keyWord){
+        ArrayList<String> list = words.get(keyWord);
+        // In case the map doesn't contain the Key Word
+        // or the list is empty the program will
+        // return an empty string
+        if(list == null || list.isEmpty()){
+            return "";
+        }
+        Random rand = new Random();
+        int index = rand.nextInt(list.size());
+        return list.get(index);
     }
 
     public static boolean endsWithPunctuation(String word){
