@@ -27,18 +27,18 @@ public class Markov {
                 addLine(newLine);
             }
         } catch (Exception e) {
-            System.out.println("Couldn't open " + filename);
+            System.out.println("Couldn't open or find " + filename);
         }
     }
 
     public void addLine(String line){
-        if(line.isEmpty()){
+        // To prevent whitespace lines from being split first and then passed into addWord()
+        if(line.trim().isEmpty()){
             return;
-        } else{
-            String [] separatedLine = line.split("\\s+");
-            for(int i = 0; i < separatedLine.length; i++){
-                addWord(separatedLine[i]);
-            }
+        }
+        String [] separatedLine = line.trim().split("\\s+");
+        for(int i = 0; i < separatedLine.length; i++){
+            addWord(separatedLine[i]);
         }
     }
 
@@ -55,19 +55,34 @@ public class Markov {
     }
 
     public String getSentence() {
-        return " ";
+        StringBuilder sb = new StringBuilder();
+        String current = randomWord(BEGINS_SENTENCE);
+        while(!endsWithPunctuation(current)){
+            sb.append(current).append(" ");
+            current = randomWord(current);
+        }
+        sb.append(current);
+        return sb.toString();
     }
 
     public String randomWord(String keyWord){
         ArrayList<String> list = words.get(keyWord);
-        // In case the map doesn't contain the Key Word
-        // or the list is empty the program will
-        // return an empty string
-        if(list == null || list.isEmpty()){
-            return "";
-        }
         Random rand = new Random();
-        int index = rand.nextInt(list.size());
+        int index = 0;
+        if(list != null && !list.isEmpty()){
+            index = rand.nextInt(list.size());
+        } else {
+            // If keyword doesn't exist or is empty,
+            // fall back to selecting random word from BEGINS_SENTENCE
+            // This prevents returning am empty string
+            // (implemented based on failed case)
+            list = words.get(BEGINS_SENTENCE);
+            if((list == null) || list.isEmpty()) {
+                return "";
+            } else{
+                index = rand.nextInt(list.size());
+            }
+        }
         return list.get(index);
     }
 
@@ -86,6 +101,6 @@ public class Markov {
     }
 
     public String toString(){
-        return " ";
+        return words.toString();
     }
 }
